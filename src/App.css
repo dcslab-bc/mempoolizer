@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+}
+
+#title_view {
+  padding: 10px;
+  background-color: "#999";
+  color: "white";
+  font-family: "'Roboto', san-serif";
+  font-size: 24px;
+  font-variant: "small-caps"
+}
+
+#drop_image:hover {
+  padding: 3px;
+}
+
+#download_btn:hover {
+  cursor: pointer;
+  content: url("http://t1.snu.ac.kr/vis/b2.png");
+}
