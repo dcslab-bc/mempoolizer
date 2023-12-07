@@ -4,7 +4,6 @@ import Mainplot from "./Mainplot2.js";
 import GossipView from "./GossipView";
 import Select from 'react-select';
 import SankeyChart from './SankeyDiagram.js';
-import csv_data from "../data/data.csv";
 
 const MempoolView = ({ data }) => {
     const svgRef = useRef();
@@ -14,6 +13,7 @@ const MempoolView = ({ data }) => {
     const [timestampScaleMax, setTimestampScaleMax] = useState(0);
     const [uniqueNodeIds, setUniqueNodeIds] = useState([]);
     const [selectedTimestamp, setSelectedTimestamp] = useState(null);
+    const [selectedTxs, setSelectedTxs] = useState([]);
 
     const handleTickClick = (nodeId, timestamp) => {
         setSelectedNode(`${nodeId}`);
@@ -30,7 +30,7 @@ const MempoolView = ({ data }) => {
         const infoDisplay = d3.selectAll('info-display');
         infoDisplay.style('display', 'none');
     };
-
+    
 
     useEffect(() => {
         if (!data || data.length === 0) return;
@@ -128,6 +128,8 @@ const MempoolView = ({ data }) => {
 
         svg.append('g').attr('class', 'y-axis')
             .call(d3.axisLeft(yScale).tickFormat((d, i) => `Node ${d}`));
+        setSelectedTxs(data.map((d) => JSON.parse(d.tx_from_node_detail)));
+        
 
     }, [data, selectedNodes, timestampScaleMin, timestampScaleMax]);
 
@@ -153,7 +155,8 @@ const MempoolView = ({ data }) => {
               // size={860}
               size={530}
               margin={70}
-              data={csv_data}
+              data={selectedTxs}
+              selectedTimestamp={selectedTimestamp}
             />
         </div>
       </div>

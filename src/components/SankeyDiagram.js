@@ -10,12 +10,13 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
     const [localTimestamp, setLocalTimestamp] = useState('0');
 
     useEffect(() => {
+        
         if (data.length > 0) {
             if (selectedNodeId !== null && selectedTimestamp !== null) {
                 setLocalTimestamp(selectedTimestamp);
                 setTimestamp(selectedTimestamp);
                 setSelectedTargetNode(parseInt(selectedNodeId));
-            }
+            } 
             const timestampData = data.find(entry => entry.timestamp === timestamp);
             if (timestampData) {
                 const txFromNodeDetail = JSON.parse(timestampData.tx_from_node_detail);
