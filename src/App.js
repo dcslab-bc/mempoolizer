@@ -1,6 +1,5 @@
 import React from "react";
 import MainView from "./components/MainView";
-import dataset from "./data/dataset.csv";
 import "./App.css";
 
 function App() {
@@ -10,7 +9,7 @@ function App() {
         Mempoolizer
       </div>
       <div>
-        <MainView dataset={dataset} />
+        <MainView />
       </div>
     </div>
   );
