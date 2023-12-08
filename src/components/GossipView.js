@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect} from "react";
 import * as d3 from "d3";
+import {valuemats_reorder} from "reorder.js";
 
 const GossipView = (props) => {
 	const svgSize = props.margin * 2 + props.size;
@@ -21,11 +22,11 @@ const GossipView = (props) => {
 			 .domain([min, max])
 			 .range(['#FFFFFF','#333333']);
 		
-		var labels = [[],[]];	
-		for (var i = 0; i < data[timestamp].length; i++) {
-			labels[0].push(i.toString());
-			labels[1].push(i.toString());
-		}
+		let labels = createCoordinateLabels(data[timestamp].length);
+		const result = reorderMatrixWithValueAndLabels(data[timestamp], labels);
+		var orderedData = result.reorderedValues;
+		var orderedLabels = extractRowAndColumnLabels(result.reorderedLabels);
+		console.log(orderedLabels);
 
 		const cellSize = props.size / data[timestamp].length;
 
@@ -35,7 +36,7 @@ const GossipView = (props) => {
 		const plotGroup = svg.append('g').attr('transform', `translate(${props.margin}, ${props.margin})`);
 	
 		plotGroup.selectAll('.row-label')
-				.data(labels[0])
+				.data(orderedLabels[0])
 				.enter()
 				.append('text')
 				.attr('class', 'row-label')
@@ -46,7 +47,7 @@ const GossipView = (props) => {
 				.text(d => d);
 
 		plotGroup.selectAll('.col-label')
-				.data(labels[1])
+				.data(orderedLabels[1])
 				.enter()
 				.append('text')
 				.attr('class', 'col-label')
@@ -54,8 +55,8 @@ const GossipView = (props) => {
 				.attr('y', 0)
 				.style('text-anchor', 'middle')
 				.text(d => d);
-				const tooltip = plotGroup.append('g')
-				.style('display', 'none');
+		const tooltip = plotGroup.append('g')
+								.style('display', 'none');
 
 		tooltip.append('rect')
 				.attr('width', 150) 
@@ -67,7 +68,8 @@ const GossipView = (props) => {
 				.attr('y', 20)
 
 		var selected;
-		data[timestamp].forEach((row, i) => {
+
+		orderedData.forEach((row, i) => {
 			row.forEach((cell, j) => {
 				plotGroup.append('rect')
 						.attr('x', j * cellSize)
@@ -78,7 +80,7 @@ const GossipView = (props) => {
 						.on('mouseover', (event) => {
 							selected = d3.select(event.target).attr('stroke', 'red');
 							const [x, y] = d3.pointer(event, svg.node());
-							tooltip.select('text').text(`(${i}, ${j}) Value: ${cell}`);
+							tooltip.select('text').text(`(${orderedLabels[0][i]}, ${orderedLabels[1][j]}) Value: ${cell}`);
 							tooltip.attr('transform', `translate(${x -140}, ${y - 110})`);
 							tooltip.style('display', 'block');
 							tooltip.raise();
@@ -90,6 +92,40 @@ const GossipView = (props) => {
 			});
 		});
 	}, [props.data, props.selectedTimestamp]); 
+	function createCoordinateLabels(matrixSize) {
+		let labels = new Array(matrixSize);
+		for (let i = 0; i < matrixSize; i++) {
+			labels[i] = new Array(matrixSize);
+			for (let j = 0; j < matrixSize; j++) {
+				labels[i][j] = `(${i},${j})`;
+			}
+		}
+		return labels;
+	}
+	function reorderMatrixWithValueAndLabels(matrix, labels) {
+		// Calculate the sum of each row
+		let rowSums = matrix.map(row => row.reduce((a, b) => a + b, 0));
+	
+		// Create an array of row indices sorted by the computed sums in descending order
+		let sortedRowIndices = rowSums
+			.map((sum, index) => ({ sum, index }))
+			.sort((a, b) => b.sum - a.sum)
+			.map(pair => pair.index);
+	
+		// Reorder the rows of the matrix and labels based on the sorted indices
+		let reorderedValues = sortedRowIndices.map(index => matrix[index]);
+		let reorderedLabels = sortedRowIndices.map(index => labels[index]);
+	
+		return { reorderedValues, reorderedLabels };
+	}
+	function extractRowAndColumnLabels(reorderedLabels) {
+		let rowLabels = reorderedLabels.map(row => row[0].match(/\((\d+),/)[1]);
+		let columnLabels = reorderedLabels[0].map(label => label.match(/,(\d+)\)/)[1]);
+		let labelsArray = [rowLabels, columnLabels];
+		return labelsArray;
+	}
+
+
 	return (
     <div style={{display: "flex", width: 1400, height: 400, marginTop: -80, marginLeft: -30, boxSizing: "border-box"}}>
 		  <svg ref={gossipSvg} width={svgSize} height={svgSize}> </svg>
