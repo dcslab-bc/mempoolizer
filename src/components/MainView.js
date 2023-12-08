@@ -4,7 +4,6 @@ import MempoolView from "./MempoolView";
 import json_data from "../data/data.json";
 
 const Mainplot = (props) => {
-  const [csvData, setCsvData] = useState(null);
   async function getFile() {
     let fileHandle;
     const pickerOpts = {
