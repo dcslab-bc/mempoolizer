@@ -4,14 +4,6 @@ import MempoolView from "./MempoolView";
 import json_data from "../data/data.json";
 
 const Mainplot = (props) => {
-  const [selectedNodes, setSelectedNodes] = useState(new Array(29).fill(true));
-
-  const handleCheckboxChange = (index) => {
-    setSelectedNodes(selectedNodes.map((checked, i) => 
-      i === index ? !checked : checked
-    ));
-  };
-
   async function getFile() {
     let fileHandle;
     const pickerOpts = {
@@ -77,18 +69,6 @@ const Mainplot = (props) => {
       </div>
       <div id="profile_view" style={{width: 240, height: 1200, marginRight: 10, border: "1px solid #999"}}>
         <h2>&nbsp;Node List (29)</h2>
-        {selectedNodes.map((_, index) => (
-          <div key={index}>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedNodes[index]}
-                onChange={() => handleCheckboxChange(index)}
-              />
-              Node {index}
-            </label>
-          </div>
-        ))}
       </div>
       <div style={{width: 1000}}>
         <MempoolView
