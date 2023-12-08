@@ -19,7 +19,7 @@ const GossipView = (props) => {
 		console.log(min, max);
 		const colorScale = d3.scaleLinear()
 			 .domain([min, max])
-			 .range(['#333333','#FFFFFF']);
+			 .range(['#FFFFFF','#333333']);
 		
 		var labels = [[],[]];	
 		for (var i = 0; i < data[timestamp].length; i++) {
