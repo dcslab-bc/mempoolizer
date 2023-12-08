@@ -16,9 +16,10 @@ const GossipView = (props) => {
 		const allTxDetailsFlat = data[timestamp].flatMap(d => d);
 		const min = d3.min(allTxDetailsFlat);
 		const max = d3.max(allTxDetailsFlat);
+		console.log(min, max);
 		const colorScale = d3.scaleLinear()
 			 .domain([min, max])
-			 .range(['#FFFFFF', '#98A83B']);
+			 .range(['#333333','#FFFFFF']);
 		
 		var labels = [[],[]];	
 		for (var i = 0; i < data[timestamp].length; i++) {
@@ -66,7 +67,7 @@ const GossipView = (props) => {
 				.attr('y', 20)
 
 		var selected;
-		data.forEach((row, i) => {
+		data[timestamp].forEach((row, i) => {
 			row.forEach((cell, j) => {
 				plotGroup.append('rect')
 						.attr('x', j * cellSize)
@@ -75,19 +76,19 @@ const GossipView = (props) => {
 						.attr('height', cellSize)
 						.attr('fill', colorScale(cell))
 						.on('mouseover', (event) => {
-				selected = d3.select(event.target).attr('stroke', 'red');
-				const [x, y] = d3.pointer(event, svg.node());
-					tooltip.select('text').text(`(${i}, ${j}) Value: ${cell}`);
-					tooltip.attr('transform', `translate(${x -140}, ${y - 110})`);
-					tooltip.style('display', 'block');
-					tooltip.raise();
-			})
-				.on('mouseout', () => {
-					selected.attr('stroke', 'none');
-					tooltip.style('display', 'none');
-				});
+							selected = d3.select(event.target).attr('stroke', 'red');
+							const [x, y] = d3.pointer(event, svg.node());
+							tooltip.select('text').text(`(${i}, ${j}) Value: ${cell}`);
+							tooltip.attr('transform', `translate(${x -140}, ${y - 110})`);
+							tooltip.style('display', 'block');
+							tooltip.raise();
+						})
+						.on('mouseout', () => {
+							selected.attr('stroke', 'none');
+							tooltip.style('display', 'none');
+						});
+			});
 		});
-	});
 	}, [props.data, props.selectedTimestamp]); 
 	return (
     <div style={{display: "flex", width: 1400, height: 400, marginTop: -80, marginLeft: -30, boxSizing: "border-box"}}>

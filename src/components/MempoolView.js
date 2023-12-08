@@ -128,7 +128,15 @@ const MempoolView = ({ data }) => {
 
         svg.append('g').attr('class', 'y-axis')
             .call(d3.axisLeft(yScale).tickFormat((d, i) => `Node ${d}`));
-        setSelectedTxs(data.map((d) => JSON.parse(d.tx_from_node_detail)));
+        var groupedTx = [];
+        data.forEach((d) => {
+            let timestamp = parseInt(d.timestamp);
+            if(groupedTx.length === timestamp)
+                groupedTx.push([JSON.parse(d.tx_from_node_detail)]);
+            else
+                groupedTx[timestamp].push(JSON.parse(d.tx_from_node_detail));
+        });
+        setSelectedTxs(groupedTx);
         
 
     }, [data, selectedNodes, timestampScaleMin, timestampScaleMax]);
