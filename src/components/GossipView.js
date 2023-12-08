@@ -7,7 +7,7 @@ const GossipView = (props) => {
 
 
 	useEffect(() => {
-
+		console.log(props.selectedNode);
 		if (!props.data || !props.selectedTimestamp || props.data.length === 0) return;
 		
 		const data = props.data;
@@ -16,7 +16,7 @@ const GossipView = (props) => {
 		const allTxDetailsFlat = data[timestamp].flatMap(d => d);
 		const min = d3.min(allTxDetailsFlat);
 		const max = d3.max(allTxDetailsFlat);
-		console.log(min, max);
+
 		const colorScale = d3.scaleLinear()
 			 .domain([min, max])
 			 .range(['#FFFFFF','#333333']);
@@ -25,7 +25,7 @@ const GossipView = (props) => {
 		const result = reorderMatrixWithValueAndLabels(data[timestamp], labels);
 		var orderedData = result.reorderedValues;
 		var orderedLabels = extractRowAndColumnLabels(result.reorderedLabels);
-		console.log(orderedLabels);
+		
 
 		const cellSize = props.size / data[timestamp].length;
 
@@ -38,6 +38,7 @@ const GossipView = (props) => {
 				.data(orderedLabels[0])
 				.enter()
 				.append('text')
+				.style('fill', d => d === props.selectedNode ? 'red' : 'black')
 				.attr('class', 'row-label')
 				.attr('x', 0)
 				.attr('y', (d, i) => i * cellSize + cellSize / 2)
@@ -90,7 +91,7 @@ const GossipView = (props) => {
 						});
 			});
 		});
-	}, [props.data, props.selectedTimestamp]); 
+	}, [props.data, props.selectedTimestamp, props.selectedNode]); 
 	function createCoordinateLabels(matrixSize) {
 		let labels = new Array(matrixSize);
 		for (let i = 0; i < matrixSize; i++) {
@@ -126,7 +127,7 @@ const GossipView = (props) => {
 
 
 	return (
-    <div style={{display: "flex", width: 1400, height: 400, marginTop: -80, marginLeft: -30, boxSizing: "border-box"}}>
+		<div style={{display: "flex", width: 1400, height: 400, marginTop: -70, marginLeft: -75, boxSizing: "border-box"}}>
 		  <svg ref={gossipSvg} width={svgSize} height={svgSize}> </svg>
 		</div>
     // <div style={{width: 400, height: 400, border: "1px solid #999"}}>GossipView Main</div>

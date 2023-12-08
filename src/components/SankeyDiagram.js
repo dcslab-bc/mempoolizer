@@ -15,7 +15,7 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
             if (selectedNodeId == null && selectedTimestamp == null) {
                 setLocalTimestamp('0');
                 setTimestamp(0);
-                setSelectedTargetNode(parseInt(0));
+                setSelectedTargetNode(0);
             }
 
             if (selectedNodeId !== null && selectedTimestamp !== null) {
@@ -52,7 +52,7 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
                     links,
                 };
 
-                const width = 530;
+                const width = 510;
                 const height = 540;
 
                 const sankey = d3Sankey()
@@ -67,26 +67,42 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
 
                 svg.selectAll('*').remove();
 
-                const nodeGroup = svg.append('g').selectAll('.node')
+                const nodeGroup = svg
+                    .append('g')
+                    .selectAll('.node')
                     .data(sankeyNodes)
-                    .enter().append('g')
+                    .enter()
+                    .append('g')
                     .attr('class', 'node')
-                    .attr('transform', d => `translate(${d.x0},${d.y0})`);
+                    .attr('transform', (d) => `translate(${d.x0},${d.y0})`);
 
-                nodeGroup.append('rect')
-                    .attr('height', d => d.y1 - d.y0)
+                nodeGroup
+                    .append('rect')
+                    .attr('height', (d) => d.y1 - d.y0)
                     .attr('width', sankey.nodeWidth())
-                    .attr('transform', d => `translate(22,5)`)
+                    .attr('transform', (d) => `translate(22,5)`)
                     .style('fill', (d, i) => d3.color(colorScale(i)).darker());
-                
-                nodeGroup.filter(d => d.sourceLinks.length || d.targetLinks.length)
+
+                nodeGroup
+                    .filter((d) => d.sourceLinks.length || d.targetLinks.length)
                     .append('text')
                     .attr('x', -6)
-                    .attr('y', d => (d.y1 - d.y0) / 2)
+                    .attr('y', (d) => (d.y1 - d.y0) / 2)
                     .attr('dy', '0.35em')
                     .attr('text-anchor', 'end')
-                    .attr('transform', d => `translate(25,5)`)
-                    .text(d => `${d.id}`);
+                    .attr('transform', (d) => `translate(25,5)`)
+                    .text((d) => `${d.id}`)
+                    .on('mouseover', function (event, d) {
+                        const infoHtml = `<div>${d.name}</div>`;
+                        infoDisplay
+                            .html(infoHtml)
+                            .style('left', `${event.pageX + 10}px`)
+                            .style('top', `${event.pageY + 10}px`)
+                            .style('display', 'block');
+                    })
+                    .on('mouseout', function () {
+                        infoDisplay.style('display', 'none');
+                    });
 
                 const infoDisplay = d3.select('body')
                     .append('div')
@@ -103,24 +119,7 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
                 const infoDisplayUpdate = d3.selectAll('.info-display');
                 infoDisplayUpdate.style('display', 'none');
 
-                nodeGroup.append('rect')
-                    .attr('height', d => d.y1 - d.y0)
-                    .attr('width', sankey.nodeWidth())
-                    .style('fill', (d, i) => d3.color(colorScale(i)).darker())
-                    .on('mouseover', function (event, d) {
-                        const infoHtml = `
-                            <div>${d.name}</div>
-                        `;
-                        infoDisplay.html(infoHtml)
-                            .style('left', `${event.pageX + 10}px`)
-                            .style('top', `${event.pageY + 10}px`)
-                            .style('display', 'block');
-                    })
-                    .on('mouseout', function () {
-                        infoDisplay.style('display', 'none');
-                    });;
-
-                    svg.selectAll('.link')
+                svg.selectAll('.link')
                     .data(sankeyLinks)
                     .enter()
                     .append('path')
@@ -160,7 +159,7 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
             />
             <GoogleFontLoader fonts={[{ font: 'Orbitron', weights: [400, 700] }]} />
             <div ref={infoDisplayRef} className="info-display" style={{ display: 'none' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginLeft: '-40px', marginTop: '-50px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginLeft: '-40px', marginRight:'10px', marginTop: '-80px' }}>
                 <label style={{ textAlign: 'center' }}>Target: Node {selectedTargetNode}</label>
                 <label style={{ textAlign: 'center' }}>Timestamp: {localTimestamp}</label>
             </div>

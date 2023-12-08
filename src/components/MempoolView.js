@@ -225,6 +225,7 @@ const MempoolView = ({ data }) => {
                 margin={70}
                 data={selectedTxs}
                 selectedTimestamp={selectedTimestamp}
+                selectedNode={selectedNode}
               />
           </div>
         </div>
