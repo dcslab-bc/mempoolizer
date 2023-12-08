@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect} from "react";
 import * as d3 from "d3";
-import {valuemats_reorder} from "reorder.js";
 
 const GossipView = (props) => {
 	const svgSize = props.margin * 2 + props.size;
