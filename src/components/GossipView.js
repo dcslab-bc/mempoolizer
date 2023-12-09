@@ -4,21 +4,21 @@ import * as d3 from "d3";
 const GossipView = (props) => {
 	const svgSize = props.margin * 2 + props.size;
 	const gossipSvg = useRef(null);
-
+	const [minValue, setMinValue] = useState(0);
+	const [maxValue, setMaxValue] = useState(0);
 
 	useEffect(() => {
-		console.log(props.selectedNode);
 		if (!props.data || !props.selectedTimestamp || props.data.length === 0) return;
 		
 		const data = props.data;
 		const timestamp = parseInt(props.selectedTimestamp);
 		
 		const allTxDetailsFlat = data[timestamp].flatMap(d => d);
-		const min = d3.min(allTxDetailsFlat);
-		const max = d3.max(allTxDetailsFlat);
+		setMinValue(d3.min(allTxDetailsFlat));
+		setMaxValue(d3.max(allTxDetailsFlat));
 
 		const colorScale = d3.scaleLinear()
-			 .domain([min, max])
+			 .domain([minValue, maxValue])
 			 .range(['#FFFFFF','#333333']);
 		
 		let labels = createCoordinateLabels(data[timestamp].length);
@@ -44,6 +44,7 @@ const GossipView = (props) => {
 				.attr('y', (d, i) => i * cellSize + cellSize / 2)
 				.attr('dy', '.35em')
 				.style('text-anchor', 'end')
+				.style('user-select', 'none')
 				.text(d => d);
 
 		plotGroup.selectAll('.col-label')
@@ -56,13 +57,14 @@ const GossipView = (props) => {
 				.style('text-anchor', 'middle')
 				.text(d => d);
 		const tooltip = plotGroup.append('g')
-								.style('display', 'none');
+				.style('display', 'none');
 
 		tooltip.append('rect')
 				.attr('width', 150) 
 				.attr('height', 40) 
 				.attr('fill', 'white')
-				.attr('stroke', 'black');
+				.attr('stroke', 'black')
+				.style('user-select', 'none');
 		tooltip.append('text')
 				.attr('x', 10)
 				.attr('y', 20)
@@ -76,13 +78,16 @@ const GossipView = (props) => {
 						.attr('y', i * cellSize)
 						.attr('width', cellSize)
 						.attr('height', cellSize)
+						.style('user-select', 'none')
 						.attr('fill', colorScale(cell))
 						.on('mouseover', (event) => {
-							selected = d3.select(event.target).attr('stroke', 'red');
+							selected = d3.select(event.target).attr('stroke', 'red').attr('stroke-width', '1px').attr('cursor', 'pointer');
 							const [x, y] = d3.pointer(event, svg.node());
 							tooltip.select('text').text(`(${orderedLabels[0][i]}, ${orderedLabels[1][j]}) Value: ${cell}`);
 							tooltip.attr('transform', `translate(${x -140}, ${y - 110})`);
 							tooltip.style('display', 'block');
+							tooltip.style('font-family', '카카오 Regular');
+							tooltip.style('font-size', '16px');
 							tooltip.raise();
 						})
 						.on('mouseout', () => {
@@ -125,13 +130,16 @@ const GossipView = (props) => {
 		return labelsArray;
 	}
 
-
 	return (
 		<div style={{display: "flex", width: 1400, height: 400, marginTop: -70, marginLeft: -75, boxSizing: "border-box"}}>
+			<div style={{display: "flex", position: 'absolute', left: 1060, top: 668}}>
+					<div style={{width: 140, paddingTop: 4, fontWeight: 'bold'}}>Num of delivered TXs :&nbsp;&nbsp;</div>
+					<div style={{width: 150, height: 20, background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(68,68,68,1) 100%)'}}></div>
+					<div style={{position: 'absolute', left: 136, top: 16, paddingTop: 3}}>{minValue}</div>
+					<div style={{position: 'absolute', left: 260, top: 17, paddingTop: 3}}>{maxValue}</div>
+			</div>
 		  <svg ref={gossipSvg} width={svgSize} height={svgSize}> </svg>
 		</div>
-    // <div style={{width: 400, height: 400, border: "1px solid #999"}}>GossipView Main</div>
-    // <div style={{width: 1000, height: 400, border: "1px solid #999"}}>GossipView Detail</div>
 	)
 };
 

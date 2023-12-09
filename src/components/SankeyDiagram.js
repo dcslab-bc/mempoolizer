@@ -128,6 +128,7 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
                     .attr('d', sankeyLinkHorizontal())
                     .attr('stroke-width', d => Math.max(1, d.width))
                     .style('fill', 'none')
+                    .style('cursor', 'pointer')
                     .style('stroke', d => d3.color(colorScale(d.source.index)))
                     .on('mouseenter', (event, d) => {
                         const [x, y] = d3.pointer(event);
@@ -136,9 +137,9 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
                             .style('left', `${x * 2 + width}px`)
                             .style('top', `${y + 30}px`)
                             .html(`
-                                <p>From: Node ${d.source.id}</p>
-                                <p>To: Node ${d.target.id}</p>
-                                <p>Value: ${d.value}</p>
+                                <p>From: <span style="font-size: 14px; font-weight: bold">Node ${d.source.id}</span></p>
+                                <p>To: <span style="font-size: 14px; font-weight: bold">Node ${d.target.id}</span></p>
+                                <p>Value: <span style="font-size: 14px; font-weight: bold">${d.value}</span></p>
                             `);
                     })
                     .on('mouseleave', () => {
@@ -155,14 +156,16 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
                 ref={svgRef}
                 width={600}
                 height={620}
-                style={{ flex: '1', margin: '0 auto', marginTop: '5%' }}
+                style={{ flex: '1', margin: '0 auto', marginTop: '5%', marginLeft: 20 }}
             />
             <GoogleFontLoader fonts={[{ font: 'Orbitron', weights: [400, 700] }]} />
             <div ref={infoDisplayRef} className="info-display" style={{ display: 'none' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginLeft: '-40px', marginRight:'10px', marginTop: '-80px' }}>
-                <label style={{ textAlign: 'center' }}>Target: Node {selectedTargetNode}</label>
-                <label style={{ textAlign: 'center' }}>Timestamp: {localTimestamp}</label>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '-198px', marginRight: '10px', marginTop: '-530px', lineHeight: 2 }}>
+                <label style={{fontSize: 20}}>Target: <span style={{fontSize: 20, fontWeight: 'bold'}}>Node {selectedTargetNode}</span></label>
+                <label style={{fontSize: 20}}>Timestamp: <span style={{fontSize: 20, fontWeight: 'bold'}}>{localTimestamp}</span></label>
             </div>
+            <label style={{position: 'absolute', left: 554, top: 648, fontSize: 16}}>Node <span style={{fontWeight: 'bold'}}>{selectedTargetNode}</span></label>
+            <label style={{position: 'absolute', left: 906, top: 640, width: 200, fontSize: 16}}>Timestamp: <span style={{fontWeight: 'bold'}}>{localTimestamp}</span></label>
         </div>
     );
 
