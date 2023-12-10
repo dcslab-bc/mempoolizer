@@ -78,7 +78,6 @@ const GossipView = (props) => {
 
 		orderedData.forEach((row, i) => {
 			row.forEach((cell, j) => {
-				console.log(cell);
 				plotGroup.append('rect')
 						.attr('x', j * cellSize)
 						.attr('y', i * cellSize)
