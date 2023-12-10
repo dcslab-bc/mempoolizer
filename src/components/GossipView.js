@@ -4,8 +4,8 @@ import * as d3 from "d3";
 const GossipView = (props) => {
 	const svgSize = props.margin * 2 + props.size;
 	const gossipSvg = useRef(null);
-	const [minValue, setMinValue] = useState(0);
-	const [maxValue, setMaxValue] = useState(0);
+	var min;
+	var max;
 
 	useEffect(() => {
 		if (!props.data || !props.selectedTimestamp || props.data.length === 0) return;
@@ -14,12 +14,15 @@ const GossipView = (props) => {
 		const timestamp = parseInt(props.selectedTimestamp);
 		
 		const allTxDetailsFlat = data[timestamp].flatMap(d => d);
-		setMinValue(d3.min(allTxDetailsFlat));
-		setMaxValue(d3.max(allTxDetailsFlat));
+		min = d3.min(allTxDetailsFlat);
+		max = d3.max(allTxDetailsFlat);
+		d3.select("#min").text(min);
+		d3.select("#max").text(max);
 
 		const colorScale = d3.scaleLinear()
-			 .domain([minValue, maxValue])
+			 .domain([min, max])
 			 .range(['#FFFFFF','#333333']);
+		
 		
 		let labels = createCoordinateLabels(data[timestamp].length);
 		const result = reorderMatrixWithValueAndLabels(data[timestamp], labels);
@@ -39,6 +42,8 @@ const GossipView = (props) => {
 				.enter()
 				.append('text')
 				.style('fill', d => d === props.selectedNode ? 'red' : 'black')
+				.style('font-weight', d => d === props.selectedNode ? 1000 : 0)
+				.style('font-size',  d => d === props.selectedNode ? 15 : 10)
 				.attr('class', 'row-label')
 				.attr('x', 0)
 				.attr('y', (d, i) => i * cellSize + cellSize / 2)
@@ -73,13 +78,14 @@ const GossipView = (props) => {
 
 		orderedData.forEach((row, i) => {
 			row.forEach((cell, j) => {
+				console.log(cell);
 				plotGroup.append('rect')
 						.attr('x', j * cellSize)
 						.attr('y', i * cellSize)
 						.attr('width', cellSize)
 						.attr('height', cellSize)
 						.style('user-select', 'none')
-						.attr('fill', colorScale(cell))
+						.style('fill', colorScale(cell))
 						.on('mouseover', (event) => {
 							selected = d3.select(event.target).attr('stroke', 'red').attr('stroke-width', '1px').attr('cursor', 'pointer');
 							const [x, y] = d3.pointer(event, svg.node());
@@ -135,8 +141,8 @@ const GossipView = (props) => {
 			<div style={{display: "flex", position: 'absolute', left: 1060, top: 668}}>
 					<div style={{width: 140, paddingTop: 4, fontWeight: 'bold'}}>Num of delivered TXs :&nbsp;&nbsp;</div>
 					<div style={{width: 150, height: 20, background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(68,68,68,1) 100%)'}}></div>
-					<div style={{position: 'absolute', left: 136, top: 16, paddingTop: 3}}>{minValue}</div>
-					<div style={{position: 'absolute', left: 260, top: 17, paddingTop: 3}}>{maxValue}</div>
+					<div style={{position: 'absolute', left: 136, top: 16, paddingTop: 3}} id="min"></div>
+					<div style={{position: 'absolute', left: 260, top: 17, paddingTop: 3}} id="max"></div>
 			</div>
 		  <svg ref={gossipSvg} width={svgSize} height={svgSize}> </svg>
 		</div>
