@@ -62,7 +62,18 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
 
                 const { nodes: sankeyNodes, links: sankeyLinks } = sankey(sankeyData);
 
-                const colorScale = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, 29));
+                const customColors = [
+                    '#C9DAF8', '#AABEEA', '#8CCED1', '#B5EAD7', '#94D6A9',
+                    '#F3C4E5', '#E2A9D7', '#D58BCB', '#E8D3C3', '#D1BFA3',
+                    '#FDE5C2', '#FFD8A8', '#FFC28D', '#E1D888', '#C7C072',
+                    '#FFB3B3', '#FF9999', '#FF7F7F', '#E3A29B', '#C78B84',
+                    '#F9CB9C', '#FFD082', '#FFDD69', '#bdbcbc', '#aaabaa',
+                    '#766f7a', '#55778a', '#67cdff', '#c3e7c2'
+                ];
+                
+
+                const colorScale = d3.scaleOrdinal()
+                                    .range(customColors);
                 const svg = d3.select(svgRef.current);
 
                 svg.selectAll('*').remove();
