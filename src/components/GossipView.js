@@ -142,6 +142,8 @@ const GossipView = (props) => {
 					<div style={{width: 150, height: 20, background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(68,68,68,1) 100%)'}}></div>
 					<div style={{position: 'absolute', left: 136, top: 16, paddingTop: 3}} id="min"></div>
 					<div style={{position: 'absolute', left: 260, top: 17, paddingTop: 3}} id="max"></div>
+					<div style={{position: 'absolute', left: -382, top: 44, paddingTop: 3, fontFamily: '카카오 Regular', fontSize: 10, color: '#777'}}>From</div>
+					<div style={{position: 'absolute', left: -340, top: 21, paddingTop: 3, fontFamily: '카카오 Regular', fontSize: 10, color: '#777'}}>To</div>
 			</div>
 		  <svg ref={gossipSvg} width={svgSize} height={svgSize}> </svg>
 		</div>

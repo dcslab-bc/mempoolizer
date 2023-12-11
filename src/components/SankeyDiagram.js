@@ -177,6 +177,7 @@ const SankeyChart = ({ data, selectedNodeId, selectedTimestamp }) => {
             </div>
             <label style={{position: 'absolute', left: 554, top: 648, fontSize: 16}}>Node <span style={{fontWeight: 'bold'}}>{selectedTargetNode}</span></label>
             <label style={{position: 'absolute', left: 906, top: 640, width: 200, fontSize: 16}}>Timestamp: <span style={{fontWeight: 'bold'}}>{localTimestamp}</span></label>
+            <label style={{position: 'absolute', width: 500, left: 970, top: -22, fontFamily: '카카오 Regular', fontSize: 14}}><b>Thickness of edges</b>: Num of incoming Txs from source nodes</label>
         </div>
     );
 
